@@ -176,7 +176,7 @@ public class mainFrame extends javax.swing.JFrame {
     private void jButton_signinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_signinActionPerformed
        try {
         Socket socket = new Socket("localhost", 8080);
-        client = new Client(socket, null); // Assuming Client doesn't immediately need a server instance
+        client = new Client(socket, server);
 
         String userName = jText_userName.getText();
         String password = jText_password.getText();
@@ -184,7 +184,7 @@ public class mainFrame extends javax.swing.JFrame {
 
         // Convert credentials to bytes and send
         client.SendMessage(credentials.getBytes(StandardCharsets.UTF_8));
-
+        server.handleClient(socket);
         // Listen for the server's response
         String response = client.ListenForResponse();
         if ("confirmed".equals(response.trim())) {
