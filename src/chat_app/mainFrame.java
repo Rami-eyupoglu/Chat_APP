@@ -28,9 +28,8 @@ public class mainFrame extends javax.swing.JFrame {
 
     public mainFrame() {
         initComponents();
-        this.server.Create(8080);
-        this.server.Listen();
-
+        client = new Client("localhost", 8080);
+        client.ConnectToServer();
     }
 
     /**
@@ -46,7 +45,7 @@ public class mainFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jText_userName = new javax.swing.JTextField();
+        jText_email = new javax.swing.JTextField();
         jText_password = new javax.swing.JTextField();
         jText_conPass = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -63,11 +62,11 @@ public class mainFrame extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
         jLabel1.setText("Log in ");
 
-        jLabel2.setText("User Name: ");
+        jLabel2.setText("Email:");
 
         jLabel3.setText("Password: ");
 
-        jText_userName.setText("rami");
+        jText_email.setText("rami");
 
         jText_password.setText("rami");
 
@@ -104,7 +103,7 @@ public class mainFrame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jText_password)
-                            .addComponent(jText_userName)))
+                            .addComponent(jText_email)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -132,7 +131,7 @@ public class mainFrame extends javax.swing.JFrame {
                 .addGap(49, 49, 49)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jText_userName, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jText_email, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(17, 17, 17)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -176,29 +175,30 @@ public class mainFrame extends javax.swing.JFrame {
     private void jButton_signinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_signinActionPerformed
 
         try {
-        Socket socket = new Socket("localhost", 8080);
-        client = new Client(socket, server);
+            // Get user inputs
+            String email = jText_email.getText();
+            String password = jText_password.getText();
+            String credentials = "1," + email + "," + password; // Include operation code '1' for sign-sInput
 
-        String userName = jText_userName.getText();
-        String password = jText_password.getText();
-        String credentials = userName + "-" + password;
+            // Send credentials to the server and listen for response
+            client.userCheckinDatabase(credentials);
 
-        // Convert credentials to bytes and send
-        client.SendMessage(credentials.getBytes(StandardCharsets.UTF_8));
-        server.handleClient(socket);
-        // Listen for the server's response
-        String response = client.ListenForResponse();
-        if ("confirmed".equals(response.trim())) {
-            JOptionPane.showMessageDialog(null, "Sign in successful!");
-        } else {
-            JOptionPane.showMessageDialog(null, "Invalid username or password.");
-        }
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(null, "Error connecting to server: " + ex.getMessage());
-    } finally {
-        if (client != null) {
-            client.Disconnect(); // Properly close connections
-        }
+            // The response is handled inside the userCheckinDatabase method and stored sInput a static variable
+            String response = Client.checkDBServerResult;
+
+            // Check the server's response
+            if (response.startsWith("11")) { // Assuming '11' is a code for successful sign-sInput
+                JOptionPane.showMessageDialog(null, "Sign in successful!");
+            } else {
+                JOptionPane.showMessageDialog(null, "Invalid email or password.");
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error connecting to server: " + ex.getMessage());
+        } finally {
+            // Ensure proper cleanup
+            if (client != null) {
+                client.disconnectClientFromServer("Client disconnecting");
+            }
         }
     }//GEN-LAST:event_jButton_signinActionPerformed
 
@@ -208,7 +208,7 @@ public class mainFrame extends javax.swing.JFrame {
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+        /* If Nimbus (introduced sInput Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
@@ -249,7 +249,7 @@ public class mainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jText_conPass;
+    private javax.swing.JTextField jText_email;
     private javax.swing.JTextField jText_password;
-    private javax.swing.JTextField jText_userName;
     // End of variables declaration//GEN-END:variables
 }

@@ -17,28 +17,83 @@ import java.util.logging.Logger;
 
 public class Client extends Thread {
 
-    // her clientın bir soketi olamlı
-    public Socket socket;
-    private Server server;
-    // gönderilecek alınacak bilgileri byte dizisine çevirmek için
-    private DataInputStream sInput;
-    //private DataInputStream sInput;
-    private DataOutputStream sOutput;
+    
+    // data sending part
+    // first we wnat to send the sign sInput data to check sInput the database
+//    static String siginInData = "";
+    public static String checkDBServerResult = "";
+    ///
 
-    public boolean isListening = false;
+    Socket socket;
 
-    //yapıcı metod
-    public Client(Socket socket, Server server) {
+    DataInputStream sInput;
+    DataOutputStream sOutput;
+    // server adresi ip address
+    String serverIp;
+    // port numarası
+    int port;
+    boolean isListening = false;
 
+    public String clientName;
+    public String clientLastName;
+    public String cleintEmail;
+
+    public Client(String serverIp, int port) {
+        this.serverIp = serverIp;
+        this.port = port;
+    }
+
+    public boolean ConnectToServer() {
         try {
-            this.server = server;
-            this.socket = socket;
-            this.sInput = new DataInputStream(this.socket.getInputStream());
-            this.sOutput = new DataOutputStream(this.socket.getOutputStream());
+            // Client Soket nesnesi
+            socket = new Socket(this.serverIp, this.port);
+            sInput = new DataInputStream(socket.getInputStream());
+            sOutput = new DataOutputStream(socket.getOutputStream());
+
+            System.out.println("Connection accepted with server -> " + socket.getInetAddress() + ":" + socket.getPort());
+
+        } catch (Exception err) {
+            System.out.println("Error connecting to server: " + err);
+        }
+        return true;
+    }
+    
+
+    public void userAddToDatabase(String data) {
+        try {
+            sOutput.writeUTF(data);
+            System.out.println("data send to server is :" + data);
+            checkDBServerResult = sInput.readUTF();
+            System.out.println("Server says : " + checkDBServerResult);
+            sOutput.flush();
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
 
+    public void userCheckinDatabase(String data) {
+        try {
+            sOutput.writeUTF(data);
+            System.out.println("data send to server is :" + data);
+            checkDBServerResult = sInput.readUTF();
+            System.out.println("result of checking in db : " + checkDBServerResult);
+            sOutput.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void disconnectClientFromServer(String data) {
+        try {
+            sOutput.writeUTF(data);
+            System.out.println("data send to server is :" + data);
+            checkDBServerResult = sInput.readUTF();
+            System.out.println("result of checking in db : " + checkDBServerResult);
+            sOutput.flush();
+            Disconnect(); // Calling the Disconnect method to properly close the connection
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void Listen() {
@@ -74,20 +129,7 @@ public class Client extends Thread {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, "Error sending message: " + e.getMessage(), e);
         }
     }
-
-    public String ListenForResponse() {
-        try {
-            byte[] messageByte = new byte[1024]; // Assume response will fit in this buffer
-            int bytesRead = sInput.read(messageByte);
-            if (bytesRead > 0) {
-                return new String(messageByte, 0, bytesRead);
-            }
-        } catch (IOException e) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, "Error listening for response: " + e.getMessage(), e);
-        }
-        return "";
-    }
-
+   
     //clientı kapatan fonksiyon
     public void Disconnect() {
         try {
@@ -95,7 +137,6 @@ public class Client extends Thread {
             this.socket.close();
             this.sInput.close();
             this.sOutput.close();
-            this.server.DicconnectClient(this);
 
         } catch (IOException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
