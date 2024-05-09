@@ -69,7 +69,7 @@ public class Client extends Thread {
     public void SendMessage(byte[] msg) {
         try {
             sOutput.write(msg);
-            sOutput.flush();  // Ensure the data is sent immediately
+            sOutput.flush();  
         } catch (IOException e) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, "Error sending message: " + e.getMessage(), e);
         }

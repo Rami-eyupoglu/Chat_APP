@@ -174,7 +174,8 @@ public class mainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton_signinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_signinActionPerformed
-       try {
+
+        try {
         Socket socket = new Socket("localhost", 8080);
         client = new Client(socket, server);
 
@@ -198,7 +199,7 @@ public class mainFrame extends javax.swing.JFrame {
         if (client != null) {
             client.Disconnect(); // Properly close connections
         }
-    }
+        }
     }//GEN-LAST:event_jButton_signinActionPerformed
 
     /**
