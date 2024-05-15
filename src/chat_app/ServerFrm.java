@@ -10,18 +10,18 @@ import javax.swing.DefaultListModel;
  *
  * @author Casper
  */
-public class ServerFrame extends javax.swing.JFrame {
+public class ServerFrm extends javax.swing.JFrame {
 
     /**
-     * Creates new form ServerFrame
+     * Creates new form ServerFrm
      */
     public static DefaultListModel clientsListModel = new DefaultListModel();
     public static Server server;
     
-    public ServerFrame() {
+    public ServerFrm() {
         initComponents();
-        jList_conClient.setModel(clientsListModel);
-        jButton_stop.setEnabled(false);
+        connectedClientsList.setModel(clientsListModel);
+        stopServerBtn.setEnabled(false);
     }
 
     /**
@@ -34,11 +34,11 @@ public class ServerFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jText_port = new javax.swing.JTextField();
+        portTxt = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList_conClient = new javax.swing.JList<>();
-        jButton_start = new javax.swing.JButton();
-        jButton_stop = new javax.swing.JButton();
+        connectedClientsList = new javax.swing.JList<>();
+        startServerBtn = new javax.swing.JButton();
+        stopServerBtn = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -46,25 +46,30 @@ public class ServerFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Port No: ");
 
-        jText_port.setText("8080");
-
-        jScrollPane1.setViewportView(jList_conClient);
-
-        jButton_start.setText("Start");
-        jButton_start.addActionListener(new java.awt.event.ActionListener() {
+        portTxt.setText("8080");
+        portTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_startActionPerformed(evt);
+                portTxtActionPerformed(evt);
             }
         });
 
-        jButton_stop.setText("Stop");
-        jButton_stop.addActionListener(new java.awt.event.ActionListener() {
+        jScrollPane1.setViewportView(connectedClientsList);
+
+        startServerBtn.setText("Start");
+        startServerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_stopActionPerformed(evt);
+                startServerBtnActionPerformed(evt);
             }
         });
 
-        jLabel2.setText("Connected Users: ");
+        stopServerBtn.setText("Stop");
+        stopServerBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stopServerBtnActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Connected Clients: ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -77,17 +82,17 @@ public class ServerFrame extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(26, 26, 26)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jButton_start)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jButton_stop))
-                                    .addComponent(jText_port, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                .addComponent(startServerBtn)
+                                .addGap(18, 18, 18)
+                                .addComponent(stopServerBtn))
+                            .addComponent(portTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -96,11 +101,11 @@ public class ServerFrame extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jText_port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(portTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton_start)
-                    .addComponent(jButton_stop))
+                    .addComponent(startServerBtn)
+                    .addComponent(stopServerBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -109,23 +114,29 @@ public class ServerFrame extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_startActionPerformed
+    private void startServerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startServerBtnActionPerformed
         
-        int port = Integer.parseInt(jText_port.getText());
+        int port = Integer.parseInt(portTxt.getText());
         server = new Server();
-        // setEnable to stop a button whenthe other working.
-        jButton_start.setEnabled(false);
-        jButton_stop.setEnabled(true);
+        server.Create(port);
+        this.setEnabled(false);
+        stopServerBtn.setEnabled(true);
         server.Listen();
-    }//GEN-LAST:event_jButton_startActionPerformed
+    }//GEN-LAST:event_startServerBtnActionPerformed
 
-    private void jButton_stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_stopActionPerformed
+    private void stopServerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopServerBtnActionPerformed
         
-        this.server.Stop();
+        server.Stop();
         this.setVisible(false);
-    }//GEN-LAST:event_jButton_stopActionPerformed
+        startServerBtn.setEnabled(true);
+    }//GEN-LAST:event_stopServerBtnActionPerformed
+
+    private void portTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_portTxtActionPerformed
 
     /**
      * @param args the command line arguments
@@ -144,31 +155,32 @@ public class ServerFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ServerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ServerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ServerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ServerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ServerFrame().setVisible(true);
+                new ServerFrm().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton_start;
-    private javax.swing.JButton jButton_stop;
+    private javax.swing.JList<String> connectedClientsList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JList<String> jList_conClient;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jText_port;
+    private javax.swing.JTextField portTxt;
+    private javax.swing.JButton startServerBtn;
+    private javax.swing.JButton stopServerBtn;
     // End of variables declaration//GEN-END:variables
 }

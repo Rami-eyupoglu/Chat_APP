@@ -18,18 +18,22 @@ import javax.swing.JOptionPane;
  *
  * @author Casper
  */
-public class mainFrame extends javax.swing.JFrame {
+public class SignInFrm extends javax.swing.JFrame {
 
     /**
-     * Creates new form mainFrame
+     * Creates new form SignInFrm
      */
-    Server server = new Server();
-    Client client;
+    int serverPort;
+    String serverIp;
+    public static Client client;
 
-    public mainFrame() {
+    static String data = "";
+
+    public SignInFrm() {
         initComponents();
         client = new Client("localhost", 8080);
         client.ConnectToServer();
+        Client.signInFrm = this;
     }
 
     /**
@@ -45,11 +49,11 @@ public class mainFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jText_email = new javax.swing.JTextField();
-        jText_password = new javax.swing.JTextField();
+        emailtxt = new javax.swing.JTextField();
+        passwordTxt = new javax.swing.JTextField();
         jText_conPass = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jButton_signin = new javax.swing.JButton();
+        signInBtn = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jButton_forgetPass = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
@@ -66,17 +70,17 @@ public class mainFrame extends javax.swing.JFrame {
 
         jLabel3.setText("Password: ");
 
-        jText_email.setText("rami");
+        emailtxt.setText("rami");
 
-        jText_password.setText("rami");
+        passwordTxt.setText("rami");
 
         jLabel4.setText("Confirm Password: ");
 
-        jButton_signin.setBackground(new java.awt.Color(255, 204, 153));
-        jButton_signin.setText("Sign in");
-        jButton_signin.addActionListener(new java.awt.event.ActionListener() {
+        signInBtn.setBackground(new java.awt.Color(255, 204, 153));
+        signInBtn.setText("Sign in");
+        signInBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_signinActionPerformed(evt);
+                signInBtnActionPerformed(evt);
             }
         });
 
@@ -86,6 +90,11 @@ public class mainFrame extends javax.swing.JFrame {
         jButton_forgetPass.setBorder(null);
 
         jButton1.setText("New Register");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("You don't have an account ?");
 
@@ -102,13 +111,13 @@ public class mainFrame extends javax.swing.JFrame {
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jText_password)
-                            .addComponent(jText_email)))
+                            .addComponent(passwordTxt)
+                            .addComponent(emailtxt)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton_signin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(signInBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jText_conPass)
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -131,17 +140,17 @@ public class mainFrame extends javax.swing.JFrame {
                 .addGap(49, 49, 49)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jText_email, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(emailtxt, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(17, 17, 17)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jText_password, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(passwordTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jText_conPass, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jButton_signin)
+                .addComponent(signInBtn)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -172,35 +181,54 @@ public class mainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton_signinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_signinActionPerformed
+    private void signInBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInBtnActionPerformed
+        data = "";
+        data += "1";
+        data += ",";
+        data += emailtxt.getText();
+        data += ",";
+        data += passwordTxt.getText();
 
-        try {
-            // Get user inputs
-            String email = jText_email.getText();
-            String password = jText_password.getText();
-            String credentials = "1," + email + "," + password; // Include operation code '1' for sign-sInput
+        // we will send the sign dataInputStream data to server to check if the user is dataInputStream the DB
+        client.DataToSignİn(data);
+        // this is the respons from sever of the client request
+        String[] dataFromServer = client.serverResponse.split(",");
+        String check = dataFromServer[0];
+        if (check.equals("11")) {
+            // if email true and password true we know from the server message (11) , go to main page of the program
+            client.clientName = dataFromServer[1];
+            client.clientLastName = dataFromServer[2];
+            client.cleintEmail = dataFromServer[3];
 
-            // Send credentials to the server and listen for response
-            client.userCheckinDatabase(credentials);
-
-            // The response is handled inside the userCheckinDatabase method and stored sInput a static variable
-            String response = Client.checkDBServerResult;
-
-            // Check the server's response
-            if (response.startsWith("11")) { // Assuming '11' is a code for successful sign-sInput
-                JOptionPane.showMessageDialog(null, "Sign in successful!");
-            } else {
-                JOptionPane.showMessageDialog(null, "Invalid email or password.");
+            MainFrm mainFrm = new MainFrm();
+            for (int i = 4; i < dataFromServer.length; i++) {
+                MainFrm.projectListModel.addElement(dataFromServer[i]);
             }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error connecting to server: " + ex.getMessage());
-        } finally {
-            // Ensure proper cleanup
-            if (client != null) {
-                client.disconnectClientFromServer("Client disconnecting");
-            }
+            System.out.println("email and passowrd true");
+
+            this.setVisible(false);
+            mainFrm.setVisible(true);
+            // go to our main page 
+        } else if (check.equals("10")) {
+            // if eamil true and password wrong server send (10) , we can reset password for this  
+            System.out.println("email true but password wrong");
+            JOptionPane.showMessageDialog(this, "reset password");
+
+        } else if (check.equals("0")) {
+            // becuse no email registerd dataInputStream the database server send (0), we can create a new account or cancel
+            System.out.println("Email not found");
+            JOptionPane.showMessageDialog(this, "Email not registerd in the database!!");
+
         }
-    }//GEN-LAST:event_jButton_signinActionPerformed
+        
+    }//GEN-LAST:event_signInBtnActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+        SignUpFrm signUp = new SignUpFrm();
+        signUp.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -219,28 +247,31 @@ public class mainFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SignInFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SignInFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SignInFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(mainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SignInFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new mainFrame().setVisible(true);
+                new SignInFrm().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField emailtxt;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton_forgetPass;
-    private javax.swing.JButton jButton_signin;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -249,7 +280,7 @@ public class mainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jText_conPass;
-    private javax.swing.JTextField jText_email;
-    private javax.swing.JTextField jText_password;
+    private javax.swing.JTextField passwordTxt;
+    private javax.swing.JButton signInBtn;
     // End of variables declaration//GEN-END:variables
 }

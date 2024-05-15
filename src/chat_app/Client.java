@@ -17,38 +17,38 @@ import java.util.logging.Logger;
 
 public class Client extends Thread {
 
-    
     // data sending part
-    // first we wnat to send the sign sInput data to check sInput the database
+    // first we wnat to send the sign dataInputStream data to check dataInputStream the database
 //    static String siginInData = "";
-    public static String checkDBServerResult = "";
+    String serverResponse = "";
     ///
 
     Socket socket;
 
-    DataInputStream sInput;
-    DataOutputStream sOutput;
-    // server adresi ip address
+    DataInputStream dataInputStream;
+    DataOutputStream dataOutputStream;
     String serverIp;
-    // port numarası
-    int port;
+    int serverPort;
     boolean isListening = false;
-
+    
+    // will be used for sign in operation latter.
     public String clientName;
     public String clientLastName;
     public String cleintEmail;
+    
+    static SignInFrm signInFrm;
 
     public Client(String serverIp, int port) {
         this.serverIp = serverIp;
-        this.port = port;
+        this.serverPort = port;
     }
 
     public boolean ConnectToServer() {
         try {
-            // Client Soket nesnesi
-            socket = new Socket(this.serverIp, this.port);
-            sInput = new DataInputStream(socket.getInputStream());
-            sOutput = new DataOutputStream(socket.getOutputStream());
+
+            socket = new Socket(this.serverIp, this.serverPort);
+            dataInputStream = new DataInputStream(socket.getInputStream());
+            dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
             System.out.println("Connection accepted with server -> " + socket.getInetAddress() + ":" + socket.getPort());
 
@@ -58,89 +58,110 @@ public class Client extends Thread {
         return true;
     }
     
-
-    public void userAddToDatabase(String data) {
+    public void clientOffline(String data) {
         try {
-            sOutput.writeUTF(data);
+            dataOutputStream.writeUTF(data);
             System.out.println("data send to server is :" + data);
-            checkDBServerResult = sInput.readUTF();
-            System.out.println("Server says : " + checkDBServerResult);
-            sOutput.flush();
+            serverResponse = dataInputStream.readUTF();
+            System.out.println("result of checking in db : " + serverResponse);
+            dataOutputStream.flush();
+
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
+    public void DataToProjectMembers(String data) {
+        try {
+            dataOutputStream.writeUTF(data);
+            System.out.println("data send to server is :" + data);
+            serverResponse = "";
+            dataOutputStream.flush();
+            serverResponse = dataInputStream.readUTF();
+            System.out.println("Response form server (Sign In) : " + serverResponse);
+            dataOutputStream.flush();
+
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void userCheckinDatabase(String data) {
+    public void DataToSignİn(String data) {
         try {
-            sOutput.writeUTF(data);
+            dataOutputStream.writeUTF(data);
             System.out.println("data send to server is :" + data);
-            checkDBServerResult = sInput.readUTF();
-            System.out.println("result of checking in db : " + checkDBServerResult);
-            sOutput.flush();
+            serverResponse = "";
+            dataOutputStream.flush();
+            serverResponse = dataInputStream.readUTF();
+            System.out.println("Response form server (Sign In) : " + serverResponse);
+            dataOutputStream.flush();
+
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void disconnectClientFromServer(String data) {
+    public void DataToSignUp(String data) {
         try {
-            sOutput.writeUTF(data);
+            dataOutputStream.writeUTF(data);
             System.out.println("data send to server is :" + data);
-            checkDBServerResult = sInput.readUTF();
-            System.out.println("result of checking in db : " + checkDBServerResult);
-            sOutput.flush();
-            Disconnect(); // Calling the Disconnect method to properly close the connection
+            serverResponse = "";
+            dataOutputStream.flush();
+            serverResponse = dataInputStream.readUTF();
+            System.out.println("Response from server (sign up) : " + serverResponse);
+            dataOutputStream.flush();
+
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public void createProject(String data) {
+        try {
+            dataOutputStream.writeUTF(data);
+            System.out.println("data send to server is :" + data);
+            dataOutputStream.flush();
+            serverResponse = "";
+            serverResponse = dataInputStream.readUTF();
+            System.out.println("Response form server (Create new project) : " + serverResponse);
+            dataOutputStream.flush();
+
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void joinProject(String data) {
+        try {
+            dataOutputStream.writeUTF(data);
+            System.out.println("data send to server is :" + data);
+            dataOutputStream.flush();
+            serverResponse = "";
+            serverResponse = dataInputStream.readUTF();
+            System.out.println("Response form server (Join project) : " + serverResponse);
+            dataOutputStream.flush();
+
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+  
     public void Listen() {
         this.isListening = true;
         this.start();
-
     }
 
-    @Override
-    public void run() {
+
+    public void SendMessage(String data) {
         try {
-            while (this.isListening) {
-                byte[] messageByte = new byte[12];
-                int bytesRead = sInput.read(messageByte);
-                String message = new String(messageByte, 0, bytesRead);
-                System.out.println(message);
-
-            }
-
-        } catch (IOException ex) {
-            this.Disconnect();
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    //mesaj gönderme fonksiyonu
-    public void SendMessage(byte[] msg) {
-        try {
-            sOutput.write(msg);
-            sOutput.flush();  
-        } catch (IOException e) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, "Error sending message: " + e.getMessage(), e);
-        }
-    }
-   
-    //clientı kapatan fonksiyon
-    public void Disconnect() {
-        try {
-            this.isListening = false;
-            this.socket.close();
-            this.sInput.close();
-            this.sOutput.close();
-
-        } catch (IOException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            dataOutputStream.writeUTF(data);
+        } catch (IOException err) {
+            System.out.println("Exception writing to server: " + err);
         }
     }
 
+    
 }
