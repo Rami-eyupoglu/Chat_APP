@@ -10,16 +10,17 @@ import javax.swing.JOptionPane;
  *
  * @author Casper
  */
-public class SignUpFrm extends javax.swing.JFrame {
+public class SignUpFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form NewRegister
      */
     Client client;
     public String data = "";
-    public SignUpFrm() {
+
+    public SignUpFrame() {
         initComponents();
-        client = SignInFrm.client;
+        client = SignInFrame.client;
     }
 
     /**
@@ -87,6 +88,11 @@ public class SignUpFrm extends javax.swing.JFrame {
         });
 
         jButton2.setText("Back");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("Last Name: ");
 
@@ -182,7 +188,7 @@ public class SignUpFrm extends javax.swing.JFrame {
         data += lastname;
         data += ",";
         String email = emailTxt.getText();
-        client.cleintEmail = email;
+        client.clientEmail = email;
         data += email;
         data += ",";
         String password = new String(passwordTxt.getPassword());
@@ -197,16 +203,25 @@ public class SignUpFrm extends javax.swing.JFrame {
                 client.DataToSignUp(data);
                 String serverResult = client.serverResponse;
                 if (serverResult.equals("111")) {
-                    SignInFrm signIn = Client.signInFrm;
+                    SignInFrame signIn = Client.signInFrm;
                     this.setVisible(false);
                     signIn.setVisible(true);
                 } else if (serverResult.equals("000")) {
                     JOptionPane.showMessageDialog(this, "Email is used use new email!!");
-                    
+
                 }
             }
         }
     }//GEN-LAST:event_signUpButtonActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // Close the current window.
+        this.dispose(); 
+
+        // Open the sign-in form
+        SignInFrame signInFrm = new SignInFrame();
+        signInFrm.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -225,21 +240,23 @@ public class SignUpFrm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SignUpFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SignUpFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SignUpFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SignUpFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SignUpFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SignUpFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SignUpFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SignUpFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SignUpFrm().setVisible(true);
+                new SignUpFrame().setVisible(true);
             }
         });
     }

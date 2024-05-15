@@ -5,23 +5,25 @@
 package chat_app;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Casper
  */
-public class ServerFrm extends javax.swing.JFrame {
+public class ServerFrame extends javax.swing.JFrame {
 
     /**
-     * Creates new form ServerFrm
+     * Creates new form ServerFrame
      */
+    // creat a model to add the connected clients.
     public static DefaultListModel clientsListModel = new DefaultListModel();
     public static Server server;
-    
-    public ServerFrm() {
+
+    public ServerFrame() {
         initComponents();
         connectedClientsList.setModel(clientsListModel);
-        stopServerBtn.setEnabled(false);
+        
     }
 
     /**
@@ -78,22 +80,23 @@ public class ServerFrm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(startServerBtn)
-                                .addGap(18, 18, 18)
-                                .addComponent(stopServerBtn))
-                            .addComponent(portTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(22, Short.MAX_VALUE))
+                                .addGap(26, 26, 26)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(startServerBtn)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(stopServerBtn))
+                                    .addComponent(portTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 167, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,10 +109,10 @@ public class ServerFrm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(startServerBtn)
                     .addComponent(stopServerBtn))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addGap(30, 30, 30)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -118,20 +121,32 @@ public class ServerFrm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startServerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startServerBtnActionPerformed
-        
-        int port = Integer.parseInt(portTxt.getText());
-        server = new Server();
-        server.Create(port);
-        this.setEnabled(false);
-        stopServerBtn.setEnabled(true);
-        server.Listen();
+
+        String portString = portTxt.getText().trim();
+        // make sure the port number non empty and contain numbers only. 
+        if (portString.isEmpty() || !portString.matches("^\\d+$")) {
+            // Inform the user about the incorrect input.
+            JOptionPane.showMessageDialog(this, "Please enter a valid port number (non-empty, digits only).", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+        } else {
+            // Parse the port number and proceed with server creation.
+            int port = Integer.parseInt(portString);
+            server = new Server();
+            if (server.Create(port)) { 
+                this.setEnabled(false);
+                stopServerBtn.setEnabled(true);
+                server.Listen();
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to start the server on port " + port, "Server Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
     }//GEN-LAST:event_startServerBtnActionPerformed
 
     private void stopServerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopServerBtnActionPerformed
-        
+        // stopping the server.
         server.Stop();
         this.setVisible(false);
-        startServerBtn.setEnabled(true);
+
     }//GEN-LAST:event_stopServerBtnActionPerformed
 
     private void portTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portTxtActionPerformed
@@ -155,21 +170,23 @@ public class ServerFrm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ServerFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ServerFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ServerFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ServerFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ServerFrm().setVisible(true);
+                new ServerFrame().setVisible(true);
             }
         });
     }

@@ -25,10 +25,10 @@ import java.util.logging.Logger;
 class ClientHandler extends Thread {
 
     Client client;
-    
+
     DataInputStream dataInputStream;
     DataOutputStream dataOutputStream;
-    
+
     // My dataBase info.
     public String url = "jdbc:mysql://localhost:3306/ChatApp_db";
     public String username = "root";
@@ -55,13 +55,11 @@ class ClientHandler extends Thread {
     public void handleClient(Socket clientSocket) {
         while (true) {
             try {
-
                 String clientMessage = dataInputStream.readUTF();
                 /// this is the messsage from the client we will check like four things
                 // 1 if the message starts with one it means clients want to sign dataInputStream
 
-                System.out.println("Message form client" + clientSocket.getInetAddress().toString() + ":"
-                        + clientSocket.getPort());
+                System.out.println("Message form client" + clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort());
                 System.out.println(clientMessage);
                 // we will split the data came from the client
 
@@ -69,38 +67,53 @@ class ClientHandler extends Thread {
 
                 String operationCode = data[0];
                 // sign dataInputStream section 1 means sigin dataInputStream
-                if (operationCode.equals("1")) {
-                    String email = data[1];
-                    String passwordData = data[2];
-                    signIn(email, passwordData);
+                switch (operationCode) {
+                    case "1":
+                        // Sign-in section
+                        String email = data[1];
+                        String passwordData = data[2];
+                        signIn(email, passwordData);
+                        break;
 
-                } // sign ups section
-                else if (operationCode.equals("2")) {
-                    String name = data[1];
-                    String lastName = data[2];
-                    String email = data[3];
-                    String passwordData = data[4];
-                    signUp(name, lastName, email, passwordData);
+                    case "2":
+                        // Sign-up section
+                        String name = data[1];
+                        String lastName = data[2];
+                        String emailSignUp = data[3]; 
+                        String passwordSignUp = data[4]; 
+                        signUp(name, lastName, emailSignUp, passwordSignUp);
+                        break;
 
-                } else if (operationCode.equals("3")) {
-                    String pEmail = data[1];
-                    String pName = data[2];
-                    String userName = data[3];
-                    String userLastName = data[4];
-                    createProject(userName, userLastName, pEmail, pName);
+                    case "3":
+                        // Create project section
+                        String projectEmail = data[1]; 
+                        String projectName = data[2]; 
+                        String userName = data[3];
+                        String userLastName = data[4];
+                        createProject(userName, userLastName, projectEmail, projectName);
+                        break;
 
-                } else if (operationCode.equals("4")) {
-                    String pName = data[1];
-                    String pKey = data[2];
-                    String clientName = data[3];
-                    String clientLastName = data[4];
-                    String clientEmail = data[5];
-                    joinProject(pName, pKey, clientName, clientLastName, clientEmail);
+                    case "4":
+                        // Join project section
+                        String projectNameJoin = data[1]; 
+                        String projectKey = data[2];
+                        String clientNameJoin = data[3]; 
+                        String clientLastNameJoin = data[4]; 
+                        String clientEmailJoin = data[5]; 
+                        joinProject(projectNameJoin, projectKey, clientNameJoin, clientLastNameJoin, clientEmailJoin);
+                        break;
 
-                } else if (operationCode.equals("5")) {
-                    String pName = data[1];
-                    String message = data[2];
-                    sendMessage(pName, message);
+                    case "5":
+                        // Send message section
+                        String projectNameMessage = data[1]; // Renamed for clarity
+                        String message = data[2];
+                        sendMessage(projectNameMessage, message);
+                        break;
+
+                    default:
+                        // Handle unknown operation codes
+                        System.out.println("Unknown operation code: " + operationCode);
+                        break;
                 }
 
             } catch (IOException ex) {
@@ -125,7 +138,7 @@ class ClientHandler extends Thread {
             while (rs.next()) {
                 String email = rs.getString("email");
                 for (Client client : Server.onlineClients) {
-                    if (email.equals(client.cleintEmail)) {
+                    if (email.equals(client.clientEmail)) {
                         try {
                             dataOutputStream.writeUTF("51");
                             dataOutputStream.writeUTF(message);
@@ -325,7 +338,7 @@ class ClientHandler extends Thread {
     private String generateKey() {
         StringBuilder key = new StringBuilder();
         String chrs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        int KEY_LENGTH = 5;
+        int KEY_LENGTH = 7;
         Random random = new Random();
         for (int i = 0; i < KEY_LENGTH; i++) {
             int index = random.nextInt(chrs.length());

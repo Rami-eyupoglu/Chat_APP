@@ -34,9 +34,9 @@ public class Client extends Thread {
     // will be used for sign in operation latter.
     public String clientName;
     public String clientLastName;
-    public String cleintEmail;
+    public String clientEmail;
     
-    static SignInFrm signInFrm;
+    static SignInFrame signInFrm;
 
     public Client(String serverIp, int port) {
         this.serverIp = serverIp;

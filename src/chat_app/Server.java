@@ -57,7 +57,7 @@ public class Server extends Thread {
                 //get the connect clients info in the server.
                 String cinfo = clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort();
                 System.out.println("client connected to server ---> " + cinfo);
-                ServerFrm.clientsListModel.addElement(cinfo);
+                ServerFrame.clientsListModel.addElement(cinfo);
 
                 // handling the opertions (sign in, sign up ....etc) 
                 ClientHandler clientHandler = new ClientHandler(clientSocket);

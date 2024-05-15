@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class Project {
 
-    public static ArrayList<Socket> connectedToPRojectClients;
+    public static ArrayList<Socket> connectedClients;
     String projectName;
     String projectManager;
     String projectServerKey;
