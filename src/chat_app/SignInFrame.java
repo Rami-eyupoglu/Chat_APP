@@ -66,6 +66,12 @@ public class SignInFrame extends javax.swing.JFrame {
             }
         });
 
+        jtextConPass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtextConPassActionPerformed(evt);
+            }
+        });
+
         jLabel4.setText("Confirm Password: ");
 
         signInBtn.setBackground(new java.awt.Color(255, 204, 153));
@@ -162,19 +168,35 @@ public class SignInFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void signInBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInBtnActionPerformed
-        String packet = buildDataString("1", jtextEmail.getText(), jtextPassword.getText());
-        // we will send the sign dataInputStream data to server to check if the user is dataInputStream the DB
+        String email = jtextEmail.getText();
+        String password = jtextPassword.getText();
+        String confirmPassword = jtextConPass.getText();
+
+        // Validate input fields
+        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "All fields must be filled out!");
+            return;
+        }
+
+        // Check if password and confirm password match
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(this, "Password and Confirm Password do not match!");
+            return; 
+        }
+
+        String packet = buildDataString("sign_in", email, password);
+        // Send the sign-in data to server to check if the user is in the DB
         client.DataToSignİn(packet);
-        // this is the respons from sever of the client request
+        // This is the response from the server for the client request
         String[] serverFeedback = client.serverResponse.split(",");
         String check = serverFeedback[0];
 
         switch (check) {
-            case "11":
-                // if email true and password true we know from the server message (11), go to main page of the program
+            case "signIn_confirm":
+                // If email and password are correct, go to the main page of the program
                 client.clientName = serverFeedback[1];
                 client.clientLastName = serverFeedback[2];
-                client.clientEmail = serverFeedback[3];  // corrected the spelling from 'clientEmail' to 'clientEmail'
+                client.clientEmail = serverFeedback[3];
 
                 MainFrame mainFrm = new MainFrame();
                 for (int i = 4; i < serverFeedback.length; i++) {
@@ -185,14 +207,14 @@ public class SignInFrame extends javax.swing.JFrame {
                 mainFrm.setVisible(true);
                 break;
 
-            case "10":
-                // if email true and password wrong server sends (10), we can reset password for this
+            case "signIn_wrongPass":
+                // If email is correct but password is wrong, reset the password field
                 jtextPassword.setText("");
-                JOptionPane.showMessageDialog(this, "Incorrect password, reset password?");
+                JOptionPane.showMessageDialog(this, "Incorrect password!!");
                 break;
 
-            case "0":
-                // because no email registered in the database server sends (0), we can create a new account or cancel
+            case "signIn_emailNotFound":
+                // If email is not registered, inform the user
                 JOptionPane.showMessageDialog(this, "Email not registered in the database!!");
                 break;
 
@@ -226,6 +248,10 @@ public class SignInFrame extends javax.swing.JFrame {
     private void jtextPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtextPasswordActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jtextPasswordActionPerformed
+
+    private void jtextConPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtextConPassActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtextConPassActionPerformed
 
     /**
      * @param args the command line arguments

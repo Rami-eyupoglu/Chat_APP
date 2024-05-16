@@ -45,6 +45,7 @@ public class ServerFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Server_test");
+        setBackground(new java.awt.Color(0, 204, 204));
 
         jLabel1.setText("Port No: ");
 

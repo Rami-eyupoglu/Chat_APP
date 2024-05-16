@@ -74,13 +74,23 @@ public class DBConnections {
      * success.
      */
     public String createProjectConnection(String adminEmail, String projectName, String projectKey) throws SQLException {
-        String insertQuery = "INSERT INTO Projects (admin_email, project_name, project_key) VALUES (?, ?, ?)";  // SQL to insert new project.
+        String insertQuery = "INSERT INTO projects (admin_email, project_name, project_key) VALUES (?, ?, ?)";  // SQL to insert new project.
         PreparedStatement pstmt = connection.prepareStatement(insertQuery);
         pstmt.setString(1, adminEmail);
         pstmt.setString(2, projectName);
         pstmt.setString(3, projectKey);
         int rows = pstmt.executeUpdate();  // Execute update and check rows affected.
         return rows > 0 ? projectKey : null;
+    }
+    /**
+     *delete the user form userprojects after leaving the project.
+     */
+     public int removeUserFromProject(String email, String projectName) throws SQLException {
+        String deleteQuery = "DELETE FROM userProjects WHERE email = ? AND project_name = ?";
+        PreparedStatement pstmt = connection.prepareStatement(deleteQuery);
+        pstmt.setString(1, email);
+        pstmt.setString(2, projectName);
+        return pstmt.executeUpdate();
     }
 
     /**
@@ -98,7 +108,7 @@ public class DBConnections {
      */
     public String getProjectKeyConnection(String email) throws SQLException {
         String key = "";
-        String sql = "SELECT project_key FROM Projects WHERE manager_email = ?";  // SQL to get project key.
+        String sql = "SELECT project_key FROM projects WHERE admin_email = ?";  // SQL to get project key.
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, email);
         ResultSet resultSet = statement.executeQuery();
@@ -113,21 +123,20 @@ public class DBConnections {
     /**
      * Add user to project. Return number of rows affected.
      */
-    public int addUserToProjectConnection(String name, String lastName, String email, String projectName) throws SQLException {
-        String insertQuery = "INSERT INTO userProjects (name, last_name, email, project_name) VALUES (?, ?, ?, ?)";  // SQL to add user to project.
-        PreparedStatement pstmt = connection.prepareStatement(insertQuery);
-        pstmt.setString(1, name);
-        pstmt.setString(2, lastName);
-        pstmt.setString(3, email);
-        pstmt.setString(4, projectName);
-        return pstmt.executeUpdate();  // Execute update and return result.
-    }
+    public int addUserToProjectConnection(String email, String projectName) throws SQLException {
+    String insertQuery = "INSERT INTO userProjects (email, project_name) VALUES (?, ?)";  // SQL to add user to project.
+    PreparedStatement pstmt = connection.prepareStatement(insertQuery);
+    pstmt.setString(1, email);
+    pstmt.setString(2, projectName);
+    return pstmt.executeUpdate();  // Execute update and return result.
+}
+
 
     /**
      * Check if project key is correct for given project name.
      */
     public boolean checkProjectKeyConnection(String projectName, String projectKey) throws SQLException {
-        String selectQuery = "SELECT project_key FROM Projects WHERE project_name = ?";  // SQL to check project key.
+        String selectQuery = "SELECT project_key FROM projects WHERE project_name = ?";  // SQL to check project key.
         PreparedStatement pstmt = connection.prepareStatement(selectQuery);
         pstmt.setString(1, projectName);
         ResultSet rs = pstmt.executeQuery();
@@ -146,7 +155,7 @@ public class DBConnections {
      */
     public String getUserProjects(String email) throws SQLException {
         StringBuilder projectNameBuilder = new StringBuilder();
-        String selectQuery = "SELECT project_name FROM userProjects WHERE email = ?";  // SQL to get projects by email.
+        String selectQuery = "SELECT project_name FROM userprojects WHERE email = ?";  // SQL to get projects by email.
         PreparedStatement pstmt = connection.prepareStatement(selectQuery);
         pstmt.setString(1, email);
         ResultSet rs = pstmt.executeQuery();

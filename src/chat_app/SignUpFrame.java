@@ -50,6 +50,8 @@ public class SignUpFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel1.setBackground(new java.awt.Color(0, 204, 204));
+
         jLabel2.setText("Name:");
 
         jLabel3.setText("E-Mail: ");
@@ -177,7 +179,7 @@ public class SignUpFrame extends javax.swing.JFrame {
     private void signUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpButtonActionPerformed
         // TODO add your handling code here:
         data = "";
-        data += "2";
+        data += "sign_up";
         data += ",";
         String name = nameTxt.getText();
         client.clientName = name;
@@ -202,12 +204,12 @@ public class SignUpFrame extends javax.swing.JFrame {
             } else {
                 client.DataToSignUp(data);
                 String serverResult = client.serverResponse;
-                if (serverResult.equals("111")) {
+                if (serverResult.equals("signUp_done")) {
                     SignInFrame signIn = Client.signInFrm;
                     this.setVisible(false);
                     signIn.setVisible(true);
-                } else if (serverResult.equals("000")) {
-                    JOptionPane.showMessageDialog(this, "Email is used use new email!!");
+                } else if (serverResult.equals("signUp_emailExist")) {
+                    JOptionPane.showMessageDialog(this, "Email is already in use!!");
 
                 }
             }

@@ -24,10 +24,9 @@ class DataBaseOperaions extends Thread {
     DataInputStream dataInputStream;
     DataOutputStream dataOutputStream;
     DBConnections dbConnections = new DBConnections();
-    
+
     DataBaseOperaions(Socket clientSocket) {
         try {
-            // the client will
             client = new Client("localhost", 8080);
             this.client.socket = clientSocket;
             dataInputStream = new DataInputStream(client.socket.getInputStream());
@@ -47,27 +46,18 @@ class DataBaseOperaions extends Thread {
         while (true) {
             try {
                 String clientMessage = dataInputStream.readUTF();
-                /// this is the messsage from the client we will check like four things
-                // 1 if the message starts with one it means clients want to sign dataInputStream
-
-                System.out.println("Message form client" + clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort());
+                System.out.println("Message from client " + clientSocket.getInetAddress().toString() + ":" + clientSocket.getPort());
                 System.out.println(clientMessage);
-                // we will split the data came from the client
-
                 String[] data = clientMessage.split(",");
-
                 String operationCode = data[0];
-                // sign dataInputStream section 1 means sigin dataInputStream
                 switch (operationCode) {
-                    case "1":
-                        // Sign-in section
+                    case "sign_in":
                         String email = data[1];
                         String passwordData = data[2];
                         signIn(email, passwordData);
                         break;
 
-                    case "2":
-                        // Sign-up section
+                    case "sign_up":
                         String name = data[1];
                         String lastName = data[2];
                         String emailSignUp = data[3];
@@ -75,34 +65,31 @@ class DataBaseOperaions extends Thread {
                         signUp(name, lastName, emailSignUp, passwordSignUp);
                         break;
 
-                    case "3":
-                        // Create project section
+                    case "CreateProject":
                         String projectEmail = data[1];
                         String projectName = data[2];
-                        String userName = data[3];
-                        String userLastName = data[4];
-                        createProject(userName, userLastName, projectEmail, projectName);
+                        createProject(projectEmail, projectName);
                         break;
 
-                    case "4":
-                        // Join project section
+                    case "joinProject":
                         String projectNameJoin = data[1];
                         String projectKey = data[2];
-                        String clientNameJoin = data[3];
-                        String clientLastNameJoin = data[4];
-                        String clientEmailJoin = data[5];
-                        joinProject(projectNameJoin, projectKey, clientNameJoin, clientLastNameJoin, clientEmailJoin);
+                        String clientEmailJoin = data[3];
+                        joinProject(projectNameJoin, projectKey, clientEmailJoin);
                         break;
-
-                    case "5":
-                        // Send message section
-                        String projectNameMessage = data[1]; // Renamed for clarity
+                    case "leaveProject":
+                        email = data[1];
+                        projectName = data[2];
+                        leaveProject(email, projectName);
+                        break;
+                        
+                    case "sendMessage":
+                        String projectNameMessage = data[1];
                         String message = data[2];
                         sendMessage(projectNameMessage, message);
                         break;
 
                     default:
-                        // Handle unknown operation codes
                         System.out.println("Unknown operation code: " + operationCode);
                         break;
                 }
@@ -124,19 +111,34 @@ class DataBaseOperaions extends Thread {
                     String lastNameToSend = resultSet.getString("surname");
                     String emailToSend = resultSet.getString("email");
 
-                    String response = "11," + nameToSend + "," + lastNameToSend + "," + emailToSend + ",";
+                    String response = "signIn_confirm," + nameToSend + "," + lastNameToSend + "," + emailToSend + ",";
                     response += getUserProjects(emailToSend);
                     dataOutputStream.writeUTF(response);
                 } else {
                     System.out.println("Email in the database but wrong password");
-                    dataOutputStream.writeUTF("10");
+                    dataOutputStream.writeUTF("signIn_wrongPass");
                 }
             } else {
                 System.out.println("Email not registered");
-                dataOutputStream.writeUTF("0");
+                dataOutputStream.writeUTF("signIn_emailNotFound");
             }
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private synchronized void leaveProject(String email, String projectName) {
+        try {
+            int result = dbConnections.removeUserFromProject(email, projectName);
+            if (result > 0) {
+                System.out.println("User removed successfully from project.");
+                dataOutputStream.writeUTF("leaveProject_done");
+            } else {
+                System.out.println("Failed to remove user from project.");
+                dataOutputStream.writeUTF("leaveProject_failed");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(DataBaseOperaions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -145,12 +147,11 @@ class DataBaseOperaions extends Thread {
             int result = dbConnections.signUpConnection(name, lastName, email, passwordData); // Use DBConnections class
             if (result == 0) {
                 System.out.println("Email already exists");
-                dataOutputStream.writeUTF("000");
+                dataOutputStream.writeUTF("signUp_emailExist");
             } else if (result > 0) {
                 System.out.println("Data inserted successfully");
-                dataOutputStream.writeUTF("111");
+                dataOutputStream.writeUTF("signUp_done");
             } else {
-                System.out.println("Insertion failed");
                 dataOutputStream.writeUTF("insertion failed");
             }
         } catch (Exception ex) {
@@ -158,21 +159,21 @@ class DataBaseOperaions extends Thread {
         }
     }
 
-    private synchronized void createProject(String userName, String userLastName, String email, String projectName) {
+    private synchronized void createProject(String adminEmail, String projectName) {
         String randomKey = generateKey();
         try {
-            String resultKey = dbConnections.createProjectConnection(email, projectName, randomKey); // Use DBConnections class
+            String resultKey = dbConnections.createProjectConnection(adminEmail, projectName, randomKey); // Use DBConnections class
             if (resultKey != null) {
                 System.out.println("Project inserted successfully");
-                addUserToProject(userName, userLastName, email, projectName);
-                String messageToServer = "31," + randomKey;
-                dataOutputStream.writeUTF(messageToServer);
+                addUserToProject(adminEmail, projectName); // Add the admin to the project as a member
+                String messageToServer = "CreateProject_done," + randomKey;
+                dataOutputStream.writeUTF(messageToServer); // Inform client about the project creation and key
             } else {
                 System.out.println("Name not allowed: Project name is already used");
-                dataOutputStream.writeUTF("30");
+                dataOutputStream.writeUTF("CreateProject_nameDuplicate"); // Inform client that the project name is already used
             }
         } catch (Exception ex) {
-            Logger.getLogger(DataBaseOperaions.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataBaseOperaions.class.getName()).log(Level.SEVERE, null, ex); // Log any exceptions
         }
     }
 
@@ -183,10 +184,10 @@ class DataBaseOperaions extends Thread {
                 String email = rs.getString("email");
                 for (Client client : Server.onlineClients) {
                     if (email.equals(client.clientEmail)) {
-                        dataOutputStream.writeUTF("51");
+                        dataOutputStream.writeUTF("sendMessage_done");
                         dataOutputStream.writeUTF(message);
                     } else {
-                        dataOutputStream.writeUTF("50");
+                        dataOutputStream.writeUTF("sendMessage_failed");
                     }
                 }
             }
@@ -204,9 +205,9 @@ class DataBaseOperaions extends Thread {
         }
     }
 
-    public synchronized void addUserToProject(String name, String lastName, String email, String pName) {
+    public synchronized void addUserToProject(String email, String projectName) {
         try {
-            int result = dbConnections.addUserToProjectConnection(name, lastName, email, pName);
+            int result = dbConnections.addUserToProjectConnection(email, projectName);
             if (result > 0) {
                 System.out.println("User added successfully to userProjects table.");
             } else {
@@ -235,14 +236,13 @@ class DataBaseOperaions extends Thread {
         }
     }
 
-    private synchronized void joinProject(String pName, String projectKey, String name, String lastName, String email)
-            throws IOException {
-        if (checkProjectKey(pName, projectKey)) {
-            addUserToProject(name, lastName, email, pName);
-            System.out.println(name + "Join the project " + pName);
-            dataOutputStream.writeUTF("41");
+    private synchronized void joinProject(String projectName, String projectKey, String email) throws IOException {
+        if (checkProjectKey(projectName, projectKey)) {
+            addUserToProject(email, projectName);  // Call the updated method
+            System.out.println(email + " joined the project " + projectName);
+            dataOutputStream.writeUTF("joinProject_done");  // Inform client that joining was successful
         } else {
-            dataOutputStream.writeUTF("40");
+            dataOutputStream.writeUTF("joinProject_failed");  // Inform client that joining failed due to incorrect key
         }
     }
 
@@ -255,7 +255,6 @@ class DataBaseOperaions extends Thread {
             int index = random.nextInt(chrs.length());
             key.append(chrs.charAt(index));
         }
-
         return key.toString();
     }
 }
