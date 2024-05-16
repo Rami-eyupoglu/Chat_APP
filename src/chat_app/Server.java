@@ -31,8 +31,6 @@ public class Server extends Thread {
     public Server() {
     }
     
-    
-
     public boolean Create(int port) {
         try {
             this.port = port;
@@ -84,11 +82,5 @@ public class Server extends Thread {
         }
     }
 
-   /* public static void main(String[] args) {
-        Server server = new Server();
-        server.Create(8080);
-        server.Listen();
-    }
-*/
 }
 

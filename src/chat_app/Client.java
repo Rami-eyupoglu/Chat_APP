@@ -62,10 +62,10 @@ public class Client extends Thread {
         try {
             dataOutputStream.writeUTF(request); // Send data to server
             serverResponse = dataInputStream.readUTF(); // Read response from server
-            dataOutputStream.flush(); // Flush output stream
+            dataOutputStream.flush(); 
 
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex); // Log error if exception occurs
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex); 
         }
     }
 
@@ -88,13 +88,13 @@ public class Client extends Thread {
     // Method to send request to server for sign in
     public void DataToSignİn(String request) {
         try {
-            dataOutputStream.writeUTF(request); // Send data to server
+            dataOutputStream.writeUTF(request); 
             System.out.println("data send to server is :" + request);
             serverResponse = "";
-            dataOutputStream.flush(); // Flush output stream
-            serverResponse = dataInputStream.readUTF(); // Read response from server
+            dataOutputStream.flush(); 
+            serverResponse = dataInputStream.readUTF(); 
             System.out.println("Response form server (Sign In) : " + serverResponse);
-            dataOutputStream.flush(); // Flush output stream
+            dataOutputStream.flush();
 
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex); // Log error if exception occurs
@@ -104,7 +104,7 @@ public class Client extends Thread {
     // Method to send request to server for sign up
     public void DataToSignUp(String request) {
         try {
-            dataOutputStream.writeUTF(request); // Send data to server
+            dataOutputStream.writeUTF(request); 
             System.out.println("data send to server is :" + request);
             serverResponse = "";
             dataOutputStream.flush(); // Flush output stream
@@ -120,13 +120,13 @@ public class Client extends Thread {
     // Method to send request to server to create a project
     public void createProject(String request) {
         try {
-            dataOutputStream.writeUTF(request); // Send data to server
+            dataOutputStream.writeUTF(request);
             System.out.println("data send to server is :" + request);
-            dataOutputStream.flush(); // Flush output stream
+            dataOutputStream.flush();    
             serverResponse = "";
             serverResponse = dataInputStream.readUTF(); // Read response from server
             System.out.println("Response form server (Create new project) : " + serverResponse);
-            dataOutputStream.flush(); // Flush output stream
+            dataOutputStream.flush(); 
 
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex); // Log error if exception occurs
@@ -138,7 +138,7 @@ public class Client extends Thread {
         try {
             dataOutputStream.writeUTF(request); // Send data to server
             System.out.println("data send to server is :" + request);
-            dataOutputStream.flush(); // Flush output stream
+            dataOutputStream.flush(); 
             serverResponse = "";
             serverResponse = dataInputStream.readUTF(); // Read response from server
             System.out.println("Response form server (Join project) : " + serverResponse);
@@ -151,13 +151,13 @@ public class Client extends Thread {
     
     public void leaveProject(String request) {
         try {
-            dataOutputStream.writeUTF(request); // Send data to server
+            dataOutputStream.writeUTF(request);
             System.out.println("data send to server is :" + request);
-            dataOutputStream.flush(); // Flush output stream
+            dataOutputStream.flush(); 
             serverResponse = "";
-            serverResponse = dataInputStream.readUTF(); // Read response from server
+            serverResponse = dataInputStream.readUTF(); 
             System.out.println("Response form server (Join project) : " + serverResponse);
-            dataOutputStream.flush(); // Flush output stream
+            dataOutputStream.flush(); 
 
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex); // Log error if exception occurs
@@ -173,7 +173,7 @@ public class Client extends Thread {
     // Method to send a message to the server
     public void SendMessage(String data) {
         try {
-            dataOutputStream.writeUTF(data); // Send data to server
+            dataOutputStream.writeUTF(data);
         } catch (IOException err) {
             System.out.println("Exception writing to server: " + err); // Print error if writing fails
         }

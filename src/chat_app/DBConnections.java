@@ -19,18 +19,18 @@ import java.sql.*;
 public class DBConnections {
 
     private Connection connection;
-    private String url = "jdbc:mysql://localhost:3306/ChatApp_db";  
-    private String username = "root";  
-    private String password = "Rahma123321123";  
+    private String url = "jdbc:mysql://localhost:3306/ChatApp_db";
+    private String username = "root";
+    private String password = "Rahma123321123";
 
     /**
      * Constructor to make database connection when this class is created.
      */
     public DBConnections() {
         try {
-            this.connection = DriverManager.getConnection(url, username, password);  // Try connect to database.
+            this.connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
-            System.out.println("Error connecting to the database: " + e.getMessage());  // If error, print it.
+            System.out.println("Error connecting to the database: " + e.getMessage());
         }
     }
 
@@ -39,10 +39,10 @@ public class DBConnections {
      * if found.
      */
     public ResultSet signInConnection(String email) throws SQLException {
-        String sql = "SELECT * FROM clients WHERE email = ?";  // SQL query.
-        PreparedStatement statement = connection.prepareStatement(sql);  // Prepare statement with SQL.
-        statement.setString(1, email);  // Set email in query.
-        return statement.executeQuery();  // Execute query and return result.
+        String sql = "SELECT * FROM clients WHERE email = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, email);
+        return statement.executeQuery();
     }
 
     /**
@@ -50,7 +50,7 @@ public class DBConnections {
      * user.
      */
     public int signUpConnection(String name, String lastName, String email, String passwordData) throws SQLException {
-        String checkIfExistsSql = "SELECT COUNT(*) AS count FROM clients WHERE email = ?";  // SQL to check email.
+        String checkIfExistsSql = "SELECT COUNT(*) AS count FROM clients WHERE email = ?";
         PreparedStatement checkIfExistsStatement = connection.prepareStatement(checkIfExistsSql);
         checkIfExistsStatement.setString(1, email);
         ResultSet resultSet = checkIfExistsStatement.executeQuery();
@@ -59,13 +59,13 @@ public class DBConnections {
         if (count > 0) {
             return 0; // Email already exists
         } else {
-            String insertSql = "INSERT INTO clients (name, surname, email, password) VALUES (?, ?, ?, ?)";  // SQL to insert new user.
+            String insertSql = "INSERT INTO clients (name, surname, email, password) VALUES (?, ?, ?, ?)";
             PreparedStatement insertStatement = connection.prepareStatement(insertSql);
             insertStatement.setString(1, name);
             insertStatement.setString(2, lastName);
             insertStatement.setString(3, email);
             insertStatement.setString(4, passwordData);
-            return insertStatement.executeUpdate();  // Execute update and return number of rows affected.
+            return insertStatement.executeUpdate();
         }
     }
 
@@ -74,18 +74,19 @@ public class DBConnections {
      * success.
      */
     public String createProjectConnection(String adminEmail, String projectName, String projectKey) throws SQLException {
-        String insertQuery = "INSERT INTO projects (admin_email, project_name, project_key) VALUES (?, ?, ?)";  // SQL to insert new project.
+        String insertQuery = "INSERT INTO projects (admin_email, project_name, project_key) VALUES (?, ?, ?)";
         PreparedStatement pstmt = connection.prepareStatement(insertQuery);
         pstmt.setString(1, adminEmail);
         pstmt.setString(2, projectName);
         pstmt.setString(3, projectKey);
-        int rows = pstmt.executeUpdate();  // Execute update and check rows affected.
+        int rows = pstmt.executeUpdate();
         return rows > 0 ? projectKey : null;
     }
+
     /**
-     *delete the user form userprojects after leaving the project.
+     * Delete the user from userProjects after leaving the project.
      */
-     public int removeUserFromProject(String email, String projectName) throws SQLException {
+    public int removeUserFromProject(String email, String projectName) throws SQLException {
         String deleteQuery = "DELETE FROM userProjects WHERE email = ? AND project_name = ?";
         PreparedStatement pstmt = connection.prepareStatement(deleteQuery);
         pstmt.setString(1, email);
@@ -97,57 +98,56 @@ public class DBConnections {
      * Get project members by project name.
      */
     public ResultSet getProjectMembersConnection(String projectName) throws SQLException {
-        String query = "SELECT email FROM userProjects WHERE project_name = ?";  // SQL to get emails by project.
+        String query = "SELECT email FROM userProjects WHERE project_name = ?";
         PreparedStatement stmt = connection.prepareStatement(query);
         stmt.setString(1, projectName);
-        return stmt.executeQuery();  // Execute query and return results.
+        return stmt.executeQuery();
     }
 
     /**
-     * Get project key by manager email.
+     * Get project key by admin email.
      */
     public String getProjectKeyConnection(String email) throws SQLException {
         String key = "";
-        String sql = "SELECT project_key FROM projects WHERE admin_email = ?";  // SQL to get project key.
+        String sql = "SELECT project_key FROM projects WHERE admin_email = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, email);
         ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
-            key = resultSet.getString("project_key");  // Get key from result.
+            key = resultSet.getString("project_key");
         }
-        resultSet.close();  // Close result set.
-        statement.close();  // Close statement.
-        return key;  // Return key.
+        resultSet.close();
+        statement.close();
+        return key;
     }
 
     /**
      * Add user to project. Return number of rows affected.
      */
     public int addUserToProjectConnection(String email, String projectName) throws SQLException {
-    String insertQuery = "INSERT INTO userProjects (email, project_name) VALUES (?, ?)";  // SQL to add user to project.
-    PreparedStatement pstmt = connection.prepareStatement(insertQuery);
-    pstmt.setString(1, email);
-    pstmt.setString(2, projectName);
-    return pstmt.executeUpdate();  // Execute update and return result.
-}
-
+        String insertQuery = "INSERT INTO userProjects (email, project_name) VALUES (?, ?)";
+        PreparedStatement pstmt = connection.prepareStatement(insertQuery);
+        pstmt.setString(1, email);
+        pstmt.setString(2, projectName);
+        return pstmt.executeUpdate();
+    }
 
     /**
      * Check if project key is correct for given project name.
      */
     public boolean checkProjectKeyConnection(String projectName, String projectKey) throws SQLException {
-        String selectQuery = "SELECT project_key FROM projects WHERE project_name = ?";  // SQL to check project key.
+        String selectQuery = "SELECT project_key FROM projects WHERE project_name = ?";
         PreparedStatement pstmt = connection.prepareStatement(selectQuery);
         pstmt.setString(1, projectName);
         ResultSet rs = pstmt.executeQuery();
         boolean isValid = false;
         if (rs.next()) {
             String storedProjectKey = rs.getString("project_key");
-            isValid = storedProjectKey.equals(projectKey);  // Compare keys.
+            isValid = storedProjectKey.equals(projectKey);
         }
-        rs.close();  // Close result set.
-        pstmt.close();  // Close statement.
-        return isValid;  // Return check result.
+        rs.close();
+        pstmt.close();
+        return isValid;
     }
 
     /**
@@ -155,16 +155,16 @@ public class DBConnections {
      */
     public String getUserProjects(String email) throws SQLException {
         StringBuilder projectNameBuilder = new StringBuilder();
-        String selectQuery = "SELECT project_name FROM userprojects WHERE email = ?";  // SQL to get projects by email.
+        String selectQuery = "SELECT project_name FROM userProjects WHERE email = ?";
         PreparedStatement pstmt = connection.prepareStatement(selectQuery);
         pstmt.setString(1, email);
         ResultSet rs = pstmt.executeQuery();
         while (rs.next()) {
-            projectNameBuilder.append(rs.getString("project_name")).append(',');  // Build string with project names.
+            projectNameBuilder.append(rs.getString("project_name")).append(',');
         }
-        rs.close();  // Close result set.
-        pstmt.close();  // Close statement.
-        return projectNameBuilder.toString();  // Return project names.
+        rs.close();
+        pstmt.close();
+        return projectNameBuilder.toString();
     }
 
     /**
@@ -173,10 +173,10 @@ public class DBConnections {
     public void closeConnection() {
         try {
             if (connection != null) {
-                connection.close();  // Close connection if not null.
+                connection.close();
             }
         } catch (SQLException e) {
-            System.out.println("Error closing the database connection: " + e.getMessage());  // Print error if fail.
+            System.out.println("Error closing the database connection: " + e.getMessage());
         }
     }
 }

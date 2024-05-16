@@ -227,7 +227,7 @@ public class SignInFrame extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_signInBtnActionPerformed
-
+    // make packet to send to server to sign in .
     public String buildDataString(String opType, String email, String password) {
         StringBuilder dataBuilder = new StringBuilder();
         dataBuilder.append(opType);
