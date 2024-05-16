@@ -28,6 +28,11 @@ public class Server extends Thread {
     DataInputStream dataInputStream;
     DataOutputStream dataOutputStream;
 
+    public Server() {
+    }
+    
+    
+
     public boolean Create(int port) {
         try {
             this.port = port;
@@ -60,7 +65,7 @@ public class Server extends Thread {
                 ServerFrame.clientsListModel.addElement(cinfo);
 
                 // handling the opertions (sign in, sign up ....etc) 
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
+                DataBaseOperaions clientHandler = new DataBaseOperaions(clientSocket);
                 clientHandler.start();
 
             } catch (IOException ex) {
@@ -79,10 +84,11 @@ public class Server extends Thread {
         }
     }
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         Server server = new Server();
         server.Create(8080);
         server.Listen();
     }
-
+*/
 }
+

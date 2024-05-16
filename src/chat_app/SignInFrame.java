@@ -46,8 +46,6 @@ public class SignInFrame extends javax.swing.JFrame {
         jtextConPass = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         signInBtn = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        jButton_forgetPass = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
 
@@ -77,11 +75,6 @@ public class SignInFrame extends javax.swing.JFrame {
                 signInBtnActionPerformed(evt);
             }
         });
-
-        jLabel5.setText("You don't remember your passsword?");
-
-        jButton_forgetPass.setText("Forget my password");
-        jButton_forgetPass.setBorder(null);
 
         jButton1.setText("Sign Up");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -115,11 +108,8 @@ public class SignInFrame extends javax.swing.JFrame {
                             .addComponent(jtextConPass)
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton_forgetPass, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)))))
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 157, Short.MAX_VALUE)))))
                 .addGap(51, 51, 51))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(232, 232, 232)
@@ -144,16 +134,12 @@ public class SignInFrame extends javax.swing.JFrame {
                     .addComponent(jtextConPass, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(signInBtn)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jButton_forgetPass))
-                .addGap(30, 30, 30)
+                .addComponent(signInBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addGap(42, 42, 42))
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(58, 58, 58))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -285,12 +271,10 @@ public class SignInFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton_forgetPass;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jtextConPass;

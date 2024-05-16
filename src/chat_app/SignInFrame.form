@@ -71,12 +71,8 @@
                               <Component id="jtextConPass" max="32767" attributes="0"/>
                               <Component id="jButton1" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="jLabel6" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="jLabel5" alignment="0" max="32767" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jButton_forgetPass" pref="152" max="32767" attributes="0"/>
+                                  <Component id="jLabel6" min="-2" pref="174" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="157" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -111,17 +107,12 @@
                       <Component id="jLabel4" min="-2" pref="29" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="signInBtn" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton_forgetPass" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="signInBtn" min="-2" pref="29" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
+                  <Component id="jButton1" min="-2" pref="29" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -169,19 +160,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="signInBtnActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel5">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="You don&apos;t remember your passsword?"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="jButton_forgetPass">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Forget my password"/>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="null"/>
-            </Property>
-          </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jButton1">
           <Properties>
